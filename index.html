@@ -1,213 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Hospital Management System</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
+      background: #f4f7f9;
       padding: 20px;
-    }
-    h1 {
-      text-align: center;
     }
     .container {
-      max-width: 900px;
+      max-width: 1100px;
       margin: auto;
-      background: #fff;
-      padding: 20px;
+      background: white;
+      padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px #ccc;
     }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
+    h2 {
+      text-align: center;
       margin-bottom: 20px;
     }
-    nav button {
-      padding: 10px 15px;
-      font-size: 14px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background: #007bff;
-      color: white;
-    }
-    form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input, select, button {
+    input, select, textarea, button {
+      width: 100%;
       padding: 10px;
-      border: 1px solid #ccc;
+      margin: 6px 0;
       border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    form button {
-      grid-column: span 2;
-      background: #28a745;
+    button {
+      background-color: #28a745;
       color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .section {
+      margin-top: 30px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 15px;
     }
     th, td {
-      padding: 8px;
       border: 1px solid #ddd;
-      text-align: left;
+      padding: 8px;
+      text-align: center;
     }
     th {
-      background-color: #343a40;
+      background: #007bff;
       color: white;
     }
     .delete-btn {
-      background: #dc3545;
+      background-color: #dc3545;
+      padding: 5px 10px;
+      border-radius: 5px;
       color: white;
       border: none;
-      padding: 5px 8px;
-      border-radius: 4px;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Hospital Management System</h1>
-    
-    <nav>
-      <button onclick="showForm('patient')">Add Patient</button>
-      <button onclick="showForm('doctor')">Add Doctor</button>
-      <button onclick="showList('patients')">Show Patients</button>
-      <button onclick="showList('doctors')">Show Doctors</button>
-    </nav>
+<div class="container">
+  <h2>Hospital Management System (Cloud)</h2>
 
-    <form id="patientForm" style="display:none;">
-      <input type="text" id="p_name" placeholder="Patient Name" required />
-      <input type="number" id="p_age" placeholder="Age" required />
-      <select id="p_gender">
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-      <input type="text" id="p_disease" placeholder="Disease" required />
-      <button type="submit">Register Patient</button>
-    </form>
-
-    <form id="doctorForm" style="display:none;">
-      <input type="text" id="d_name" placeholder="Doctor Name" required />
-      <input type="text" id="d_specialty" placeholder="Specialization" required />
-      <select id="d_gender">
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-      <input type="text" id="d_contact" placeholder="Contact" required />
-      <button type="submit">Register Doctor</button>
-    </form>
-
-    <table id="listTable" style="display:none;">
-      <thead id="tableHead"></thead>
-      <tbody id="tableBody"></tbody>
+  <!-- Patient Registration -->
+  <div class="section">
+    <h3>Register Patient</h3>
+    <input type="text" id="pname" placeholder="Patient Name">
+    <input type="number" id="page" placeholder="Age">
+    <select id="pgender">
+      <option>Male</option><option>Female</option>
+    </select>
+    <input type="text" id="pdisease" placeholder="Disease">
+    <input type="text" id="pcontact" placeholder="Contact">
+    <textarea id="paddress" placeholder="Address"></textarea>
+    <input type="date" id="padmit" placeholder="Admit Date">
+    <button onclick="addPatient()">Add Patient</button>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Age</th><th>Gender</th><th>Disease</th><th>Contact</th><th>Address</th><th>Date</th><th>Delete</th></tr>
+      </thead>
+      <tbody id="patientList"></tbody>
     </table>
   </div>
 
-  <script>
-    const patients = [];
-    const doctors = [];
+  <!-- Doctor Registration -->
+  <div class="section">
+    <h3>Register Doctor</h3>
+    <input type="text" id="dname" placeholder="Doctor Name">
+    <input type="text" id="dspecialty" placeholder="Specialization">
+    <input type="text" id="dcontact" placeholder="Contact">
+    <input type="text" id="dshift" placeholder="Shift (Morning/Evening)">
+    <button onclick="addDoctor()">Add Doctor</button>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Specialty</th><th>Contact</th><th>Shift</th><th>Delete</th></tr>
+      </thead>
+      <tbody id="doctorList"></tbody>
+    </table>
+  </div>
 
-    const patientForm = document.getElementById("patientForm");
-    const doctorForm = document.getElementById("doctorForm");
-    const table = document.getElementById("listTable");
-    const tableHead = document.getElementById("tableHead");
-    const tableBody = document.getElementById("tableBody");
+  <!-- Disease List -->
+  <div class="section">
+    <h3>Disease List</h3>
+    <input type="text" id="diseaseName" placeholder="Disease Name">
+    <textarea id="diseaseInfo" placeholder="Description"></textarea>
+    <button onclick="addDisease()">Add Disease</button>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Description</th><th>Delete</th></tr>
+      </thead>
+      <tbody id="diseaseList"></tbody>
+    </table>
+  </div>
+</div>
 
-    function showForm(type) {
-      patientForm.style.display = type === "patient" ? "grid" : "none";
-      doctorForm.style.display = type === "doctor" ? "grid" : "none";
-      table.style.display = "none";
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script>
+  // REPLACE THIS CONFIG
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // Patient
+  function addPatient() {
+    const patient = {
+      name: document.getElementById("pname").value,
+      age: document.getElementById("page").value,
+      gender: document.getElementById("pgender").value,
+      disease: document.getElementById("pdisease").value,
+      contact: document.getElementById("pcontact").value,
+      address: document.getElementById("paddress").value,
+      date: document.getElementById("padmit").value
+    };
+    const id = db.ref().child("patients").push().key;
+    db.ref("patients/" + id).set(patient);
+  }
+
+  function addDoctor() {
+    const doctor = {
+      name: document.getElementById("dname").value,
+      specialty: document.getElementById("dspecialty").value,
+      contact: document.getElementById("dcontact").value,
+      shift: document.getElementById("dshift").value
+    };
+    const id = db.ref().child("doctors").push().key;
+    db.ref("doctors/" + id).set(doctor);
+  }
+
+  function addDisease() {
+    const disease = {
+      name: document.getElementById("diseaseName").value,
+      description: document.getElementById("diseaseInfo").value
+    };
+    const id = db.ref().child("diseases").push().key;
+    db.ref("diseases/" + id).set(disease);
+  }
+
+  function deleteRecord(path, id) {
+    if (confirm("Delete this record?")) {
+      db.ref(`${path}/${id}`).remove();
     }
+  }
 
-    function showList(type) {
-      patientForm.style.display = "none";
-      doctorForm.style.display = "none";
-      table.style.display = "table";
-
-      tableHead.innerHTML = "";
-      tableBody.innerHTML = "";
-
-      if (type === "patients") {
-        tableHead.innerHTML = `
-          <tr>
-            <th>Name</th><th>Age</th><th>Gender</th><th>Disease</th><th>Action</th>
-          </tr>`;
-        patients.forEach((p, index) => {
-          const row = `<tr>
-            <td>${p.name}</td>
-            <td>${p.age}</td>
-            <td>${p.gender}</td>
-            <td>${p.disease}</td>
-            <td><button class="delete-btn" onclick="deleteEntry('patient', ${index})">Delete</button></td>
-          </tr>`;
-          tableBody.innerHTML += row;
-        });
-      } else {
-        tableHead.innerHTML = `
-          <tr>
-            <th>Name</th><th>Specialty</th><th>Gender</th><th>Contact</th><th>Action</th>
-          </tr>`;
-        doctors.forEach((d, index) => {
-          const row = `<tr>
-            <td>${d.name}</td>
-            <td>${d.specialty}</td>
-            <td>${d.gender}</td>
-            <td>${d.contact}</td>
-            <td><button class="delete-btn" onclick="deleteEntry('doctor', ${index})">Delete</button></td>
-          </tr>`;
-          tableBody.innerHTML += row;
-        });
-      }
-    }
-
-    patientForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const patient = {
-        name: document.getElementById("p_name").value,
-        age: document.getElementById("p_age").value,
-        gender: document.getElementById("p_gender").value,
-        disease: document.getElementById("p_disease").value
-      };
-      patients.push(patient);
-      patientForm.reset();
-      alert("Patient Registered!");
+  // Display
+  db.ref("patients").on("value", snap => {
+    const list = document.getElementById("patientList");
+    list.innerHTML = "";
+    snap.forEach(child => {
+      const d = child.val();
+      list.innerHTML += `<tr>
+        <td>${d.name}</td><td>${d.age}</td><td>${d.gender}</td>
+        <td>${d.disease}</td><td>${d.contact}</td><td>${d.address}</td>
+        <td>${d.date}</td>
+        <td><button class="delete-btn" onclick="deleteRecord('patients','${child.key}')">Delete</button></td>
+      </tr>`;
     });
+  });
 
-    doctorForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const doctor = {
-        name: document.getElementById("d_name").value,
-        specialty: document.getElementById("d_specialty").value,
-        gender: document.getElementById("d_gender").value,
-        contact: document.getElementById("d_contact").value
-      };
-      doctors.push(doctor);
-      doctorForm.reset();
-      alert("Doctor Registered!");
+  db.ref("doctors").on("value", snap => {
+    const list = document.getElementById("doctorList");
+    list.innerHTML = "";
+    snap.forEach(child => {
+      const d = child.val();
+      list.innerHTML += `<tr>
+        <td>${d.name}</td><td>${d.specialty}</td><td>${d.contact}</td><td>${d.shift}</td>
+        <td><button class="delete-btn" onclick="deleteRecord('doctors','${child.key}')">Delete</button></td>
+      </tr>`;
     });
+  });
 
-    function deleteEntry(type, index) {
-      if (type === "patient") {
-        patients.splice(index, 1);
-        showList("patients");
-      } else {
-        doctors.splice(index, 1);
-        showList("doctors");
-      }
-    }
-  </script>
+  db.ref("diseases").on("value", snap => {
+    const list = document.getElementById("diseaseList");
+    list.innerHTML = "";
+    snap.forEach(child => {
+      const d = child.val();
+      list.innerHTML += `<tr>
+        <td>${d.name}</td><td>${d.description}</td>
+        <td><button class="delete-btn" onclick="deleteRecord('diseases','${child.key}')">Delete</button></td>
+      </tr>`;
+    });
+  });
+</script>
 </body>
 </html>
